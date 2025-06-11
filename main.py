@@ -11,6 +11,7 @@ urlDownload = 'https://edata.omron.com.au/eData/'
 url = 'https://edata.omron.com.au/eData/manuals.html'
 headers = ''
 savePath = './'
+dryRun = True
  
 r = requests.get(url)
 soup = BeautifulSoup(r.text, 'html.parser')
@@ -40,7 +41,7 @@ for link in links:
 
 
 for man in manDat:
-    dir = savPath + sanitize(man['parentSection']) + '/'
+    dir = savePath + sanitize(man['parentSection']) + '/'
     fileName = dir + sanitize(man['manName'] + man['fileName'])
 
     if os.path.exists(fileName):
@@ -48,3 +49,13 @@ for man in manDat:
 
     if not os.path.isdir(dir):
         os.mkdir(dir)
+
+    if dryRun:
+        print(f'''Downloading {urlDownload + man['href']}
+        To {fileName}\n''')
+        continue
+
+    manResponse = requests.get(urlDownload + man['href'])
+
+    with open(fileName, 'w') as file:
+        file.write(manResponse.content)
