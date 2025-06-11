@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def sanitize(string):
-    return string
+    return "".join(x for x in string if x.isalnum())
 
 
 urlDownload = 'https://edata.omron.com.au/eData/'
@@ -57,5 +57,5 @@ for man in manDat:
 
     manResponse = requests.get(urlDownload + man['href'])
 
-    with open(fileName, 'w') as file:
+    with open(fileName, 'wb') as file:
         file.write(manResponse.content)
