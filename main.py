@@ -24,6 +24,12 @@ manDat = []
 parentSection = '.'
 for link in links:
     try:
+        if link.parent.name == 'h1':
+            product = link.parent.text;
+    except:
+        pass
+
+    try:
         if link.parent.parent.td.attrs['valign'] == 'top':
             parentSection = link.parent.parent.td.text
     except:
@@ -38,8 +44,12 @@ for link in links:
         manName = link.parent.find_previous_sibling('td').text
     except AttributeError:
         manName = link.text
+
+    if parentSection == link.text:
+        parentSection = '';
     
     manDat.append({
+                  'product': product,
                   'parentSection': parentSection,
                   'fileName': link.text,
                   'href': link.attrs['href'],
@@ -48,14 +58,14 @@ for link in links:
 
 
 for man in manDat:
-    dir = savePath + sanitize(man['parentSection']) + '/'
-    fileName = dir + sanitize(man['manName'] + man['fileName'])
+    dir = savePath + sanitize(man['product']) + '/' + sanitize(man['parentSection']) + '/'
+    fileName = dir + sanitize(man['manName'] + man['fileName']) + '.pdf'
 
     if os.path.exists(fileName):
         continue
 
     if not os.path.isdir(dir):
-        os.mkdir(dir)
+        os.makedirs(dir)
 
     if dryRun:
         print(f'''Downloading {urlDownload + man['href']}
