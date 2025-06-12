@@ -2,6 +2,8 @@ import requests
 import os
 from bs4 import BeautifulSoup
 import re
+from time import sleep
+from random import randint
 
 
 def sanitize(string):
@@ -74,6 +76,11 @@ for man in manDat:
         continue
 
     manResponse = requests.get(urlDownload + man['href'])
+    
+    try:
+        with open(fileName, 'wb') as file:
+            file.write(manResponse.content)
+    except:
+        print(f'Could not download {fileName}')
 
-    with open(fileName, 'wb') as file:
-        file.write(manResponse.content)
+    sleep(randint(2, 30))
