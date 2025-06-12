@@ -21,7 +21,14 @@ links = soup.find_all('a')
 
 
 manDat = []
+parentSection = '.'
 for link in links:
+    try:
+        if link.parent.parent.td.attrs['valign'] == 'top':
+            parentSection = link.parent.parent.td.text
+    except:
+        pass
+
     try:
         target = link.attrs['target']
     except KeyError:
@@ -31,9 +38,9 @@ for link in links:
         manName = link.parent.find_previous_sibling('td').text
     except AttributeError:
         manName = link.text
-
+    
     manDat.append({
-                  'parentSection': link.parent.parent.parent.tr.td.text,
+                  'parentSection': parentSection,
                   'fileName': link.text,
                   'href': link.attrs['href'],
                   'manName': manName
