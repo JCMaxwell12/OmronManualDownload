@@ -1,10 +1,11 @@
 import requests
 import os
 from bs4 import BeautifulSoup
+import re
 
 
 def sanitize(string):
-    return "".join(x for x in string if x.isalnum())
+    return re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", string)
 
 
 urlDownload = 'https://edata.omron.com.au/eData/'
@@ -49,17 +50,17 @@ for link in links:
         parentSection = '';
     
     manDat.append({
-                  'product': product,
-                  'parentSection': parentSection,
-                  'fileName': link.text,
+                  'product': sanitize(product),
+                  'parentSection': sanitize(parentSection),
+                  'fileName': sanitize(link.text),
                   'href': link.attrs['href'],
-                  'manName': manName
+                  'manName': sanitize(manName)
     })
 
 
 for man in manDat:
-    dir = savePath + sanitize(man['product']) + '/' + sanitize(man['parentSection']) + '/'
-    fileName = dir + sanitize(man['manName'] + man['fileName']) + '.pdf'
+    dir = savePath + man['product'] + '/' + man['parentSection'] + '/'
+    fileName = dir + man['manName'] + ' ' + man['fileName'] + '.pdf'
 
     if os.path.exists(fileName):
         continue
