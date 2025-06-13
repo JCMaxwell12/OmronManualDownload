@@ -15,7 +15,12 @@ url = 'https://edata.omron.com.au/eData/manuals.html'
 headers = ''
 savePath = './'
 dryRun = True
- 
+
+
+if dryRun:
+    print('Running in dry run mode')
+
+
 r = requests.get(url)
 soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -71,9 +76,9 @@ for man in manDat:
         os.makedirs(dir)
 
     if dryRun:
-        print(f'''Downloading {urlDownload + man['href']}
-        To {fileName}\n''')
         continue
+    print(f'''Downloading {urlDownload + man['href']}
+    To {fileName}\n''')
 
     manResponse = requests.get(urlDownload + man['href'])
     
